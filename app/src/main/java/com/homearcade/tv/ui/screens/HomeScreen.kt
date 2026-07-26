@@ -39,6 +39,7 @@ import com.homearcade.tv.webview.HomeArcadeWebViewClient
 import com.homearcade.tv.webview.JSBridge
 import com.homearcade.tv.webview.TVKeyBridge
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -62,6 +63,11 @@ fun HomeScreen(
     var webView by remember { mutableStateOf<WebView?>(null) }
     var keyBridge by remember { mutableStateOf<TVKeyBridge?>(null) }
 
+    fun startRetry() {
+        isRetrying = true
+        retryCountdown = 10
+    }
+
     val connectionMonitor = remember {
         ConnectionMonitor(
             host = host,
@@ -79,11 +85,6 @@ fun HomeScreen(
         )
     }
 
-    fun startRetry() {
-        isRetrying = true
-        retryCountdown = 10
-    }
-
     LaunchedEffect(isRetrying) {
         if (!isRetrying) return@LaunchedEffect
         while (retryCountdown > 0) {
@@ -93,7 +94,7 @@ fun HomeScreen(
         // After countdown, check again
         if (hasError) {
             // Manually trigger monitor check
-            kotlinx.coroutines.GlobalScope.launch {
+            kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
                 val online = try {
                     val url = java.net.URL("http://$host:$port/api/health")
                     val conn = url.openConnection() as java.net.HttpURLConnection
@@ -271,9 +272,9 @@ fun HomeScreen(
 
 @Composable
 private fun HideSystemUI() {
+    val activity = androidx.compose.ui.platform.LocalView.current.context
+        as? android.app.Activity
     DisposableEffect(Unit) {
-        val activity = androidx.compose.ui.platform.LocalView.current.context
-            as? android.app.Activity
         activity?.window?.decorView?.systemUiVisibility = (
             android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 or android.view.View.SYSTEM_UI_FLAG_FULLSCREEN

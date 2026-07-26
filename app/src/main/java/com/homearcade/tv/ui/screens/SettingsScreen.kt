@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +29,7 @@ fun SettingsScreen(
     host: String,
     port: String,
     onBack: () -> Unit = {},
-    onSave: (host: String, port: String) -> Unit = {}
+    onSave: (host: String, port: String) -> Unit = { _, _ -> }
 ) {
     var editHost by remember { mutableStateOf(host) }
     var editPort by remember { mutableStateOf(port) }

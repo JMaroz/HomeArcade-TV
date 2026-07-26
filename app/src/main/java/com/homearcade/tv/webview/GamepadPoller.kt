@@ -46,7 +46,8 @@ class GamepadPoller(
             val axes = JSONObject()
             val buttons = JSONObject()
 
-            for (i in 0 until gp.buttonCount) {
+            val buttonCount = gp.motionRanges.size.coerceIn(0, 32)
+            for (i in 0 until buttonCount) {
                 buttons.put("b$i", false)
             }
 
@@ -87,8 +88,8 @@ class GamepadPoller(
     }
 
     private fun getConnectedGamepads(): List<InputDevice> {
-        val ids = inputManager.inputDeviceIds
-        return ids.mapNotNull { id ->
+        val ids: IntArray = inputManager.inputDeviceIds
+        return ids.toList().mapNotNull { id: Int ->
             val device = InputDevice.getDevice(id) ?: return@mapNotNull null
             val sources = device.sources
             if (sources and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD ||

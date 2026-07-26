@@ -1,8 +1,8 @@
 package com.homearcade.tv.ui.theme
 
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.darkColorScheme
 
 private val DarkColors = darkColorScheme(
     primary = Pink,
@@ -17,7 +17,7 @@ private val DarkColors = darkColorScheme(
     onSurfaceVariant = White.copy(alpha = 0.6f),
     error = Red,
     onError = White,
-    outline = White.copy(alpha = 0.12f)
+    border = White.copy(alpha = 0.12f)
 )
 
 @Composable
